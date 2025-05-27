@@ -4,19 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor de Libros</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <!-- Librerías para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 </head>
+
 <body class="d-flex justify-content-center align-items-start py-4 py-md-5"
       style="background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed; background-size: cover; min-height: 100vh;">
 
+<!-- Modal de Bienvenida en Gris -->
+<div class="modal fade welcome-modal" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-white" id="welcomeModalLabel">
+                    <i class="fas fa-book me-2"></i> ¡Bienvenido al Gestor de Libros!
+                </h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center">
+                        <img src="https://media.giphy.com/media/Wsju5zAb5kcOfxJV9i/giphy.gif"
+                             alt="Niño animado saludando"
+                             class="img-fluid" style="max-width: 120px;">
+                        <h5 class="mt-2 text-gray-dark">¡Hola, soy Lucas!</h5>
+                        <p class="text-muted small mb-2">Tu asistente de biblioteca</p>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="feature-list">
+                            <h6 class="mb-2 text-gray-dark"><i class="fas fa-list-ul me-2"></i>Funcionalidades principales:</h6>
+                            <ul class="list-unstyled small">
+                                <li><i class="fas fa-check text-success me-2"></i>Explora nuestro catálogo completo</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Añade nuevos libros fácilmente</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Edita información existente</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Exporta datos en varios formatos</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Gestiona códigos ISBN</li>
+                            </ul>
+                        </div>
+                        <div class="alert alert-gray mt-2 p-2">
+                            <i class="fas fa-info-circle text-gray-dark me-2"></i>
+                            <small>Consejo: Usa el interruptor superior para alternar entre código de barras y número ISBN.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center p-2">
+                <button type="button" class="btn welcome-btn btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-book-open me-1"></i> Comenzar a explorar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resto del código HTML permanece igual -->
 <div class="container" style="max-width: 1200px;">
-    <div class="bg-light bg-opacity-95 rounded-3 shadow-lg p-4 border border-secondary">
+    <div class="bg-light bg-opacity-95 rounded-3 shadow-lg p-4 border border-secondary animate__animated animate__fadeIn">
         <div class="text-center mb-4">
             <h1 class="text-dark border-bottom border-secondary pb-3 mb-3">
                 <i class="fas fa-book-open me-2"></i> Catálogo de Libros
@@ -29,7 +77,6 @@
                 <label class="form-check-label" for="showIsbnNumbers">Mostrar números de ISBN</label>
             </div>
             <div class="d-flex gap-2">
-                <!-- Botón desplegable para exportar -->
                 <div class="dropdown">
                     <button class="btn btn-outline-dark dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-file-export me-2"></i> Exportar
@@ -58,7 +105,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="libro : ${libros}">
+                <tr th:each="libro : ${libros}" class="animate__animated">
                     <td th:text="${libro.idLibro}" class="fw-semibold"></td>
                     <td th:text="${libro.titulo}"></td>
                     <td th:text="${libro.autor}"></td>
@@ -76,11 +123,11 @@
                     </td>
                     <td>
                         <div class="d-flex flex-wrap gap-2">
-                            <a class="btn btn-sm btn-outline-warning"
+                            <a class="btn btn-sm btn-outline-warning btn-hover-grow"
                                th:href="@{/editarLibro/{id} (id=${libro.idLibro})}">
                                 <i class="fas fa-edit me-1"></i> Editar
                             </a>
-                            <button class="btn btn-sm btn-outline-danger"
+                            <button class="btn btn-sm btn-outline-danger btn-hover-shake"
                                     data-bs-toggle="modal"
                                     data-bs-target="#confirmModal"
                                     th:attr="data-id=${libro.idLibro}">
@@ -98,8 +145,8 @@
 <!-- Modal de confirmación -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-danger text-white">
+        <div class="modal-content bg-light">
+            <div class="modal-header bg-secondary text-white">
                 <h5 class="modal-title" id="confirmModalLabel">
                     <i class="fas fa-exclamation-triangle me-2"></i> Confirmar eliminación
                 </h5>
@@ -120,13 +167,47 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // Generar códigos de barras al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
-        // Generar todos los códigos de barras
+        // Mostrar modal de bienvenida con retraso
+        setTimeout(function() {
+            const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+            welcomeModal.show();
+        }, 500);
+
+        // Animación de entrada para la tabla
+        const tableRows = document.querySelectorAll('#librosTable tbody tr');
+        tableRows.forEach((row, index) => {
+            row.classList.add('animate__fadeInUp');
+            row.style.animationDelay = `${index * 0.1}s`;
+            row.style.opacity = '0';
+
+            setTimeout(() => {
+                row.style.opacity = '1';
+            }, index * 100);
+        });
+
+        // Animación para los botones
+        const buttons = document.querySelectorAll('.btn-hover-grow, .btn-hover-shake');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                if (this.classList.contains('btn-hover-grow')) {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.transition = 'transform 0.2s ease';
+                } else if (this.classList.contains('btn-hover-shake')) {
+                    this.style.animation = 'shake 0.5s';
+                }
+            });
+
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.animation = 'none';
+            });
+        });
+
         JsBarcode(".barcode").init();
 
-        // Configurar el checkbox para alternar entre código de barras y número ISBN
         const checkbox = document.getElementById('showIsbnNumbers');
         checkbox.addEventListener('change', function() {
             const isChecked = this.checked;
@@ -140,11 +221,9 @@
             });
         });
 
-        // Configurar la exportación de datos
         setupExportButtons();
     });
 
-    // Manejo del modal de confirmación
     const confirmModal = document.getElementById('confirmModal');
     confirmModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
@@ -153,16 +232,13 @@
         confirmBtn.setAttribute('href', `/eliminarLibro/${libroId}`);
     });
 
-    // Función para configurar los botones de exportación
     function setupExportButtons() {
-        // Exportar a Excel
         document.getElementById('exportExcel').addEventListener('click', function() {
             const table = document.getElementById('librosTable');
             const wb = XLSX.utils.table_to_book(table, {sheet:"Libros"});
             XLSX.writeFile(wb, "catalogo_libros.xlsx");
         });
 
-        // Exportar a CSV
         document.getElementById('exportCSV').addEventListener('click', function() {
             const table = document.getElementById('librosTable');
             const csv = XLSX.utils.table_to_csv(table);
@@ -178,25 +254,21 @@
             document.body.removeChild(link);
         });
 
-        // Exportar a PDF
         document.getElementById('exportPDF').addEventListener('click', function() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Título del documento
             doc.setFontSize(18);
             doc.text('Catálogo de Libros', 14, 15);
             doc.setFontSize(12);
             doc.text('Generado el: ' + new Date().toLocaleDateString(), 14, 22);
 
-            // Tabla de datos
             doc.autoTable({
                 html: '#librosTable',
                 startY: 30,
                 styles: { fontSize: 8 },
                 headStyles: { fillColor: [52, 58, 64] },
                 didDrawPage: function(data) {
-                    // Footer
                     doc.setFontSize(10);
                     doc.setTextColor(150);
                     doc.text('Página ' + doc.internal.getNumberOfPages(),
@@ -208,7 +280,17 @@
             doc.save('catalogo_libros.pdf');
         });
     }
-</script>
 
+    // Agregamos el keyframe para la animación shake dinámicamente
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 </body>
 </html>
